@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/main.8f373667.css","mappings":"AAAA,KACA,oBACA,CAEA,wBACI,YACJ,ECNA,GACE,iBACF;AAAA","sources":["index.css","App.css"],"sourcesContent":["html{\r\nscrollbar-width: none;\r\n}\r\n\r\nbody::-webkit-scrollbar {\r\n    display: none; /* for Chrome, Safari, and Opera */\r\n};","h1{\n  text-align: center;\n}\n;"],"names":[],"sourceRoot":""}
