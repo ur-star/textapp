@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-
 export default function Textform(props) {
   const onUpClick = () => {
     // console.log('uppercase was called');
@@ -17,10 +16,9 @@ export default function Textform(props) {
     // console.log('onchange called');
   };
   const capitalize = () => {
-     
-      let newtext = text.charAt(0).toUpperCase() + text.slice(1);
-      setText(newtext);
-    
+    let newtext = text.charAt(0).toUpperCase() + text.slice(1);
+    setText(newtext);
+
     // document.getElementById('Textarea1').style.textTransform = 'capitalize';
   };
   const copy = () => {
@@ -37,12 +35,26 @@ export default function Textform(props) {
     setText("");
     props.showAlert("Text area cleared", "success");
   };
-  const speakky = ()=>{
-    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
-  }
+  const speakky = () => {
+    let txtarea = document.getElementById("Textarea1");
+    if (speechSynthesis.paused && speechSynthesis.speaking) {
+      return speechSynthesis.resume();
+    }
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.addEventListener("end", () => {
+      txtarea.disabled = false;
+    });
+    txtarea.disabled = true;
+    speechSynthesis.speak(utterance);
+  };
+  const stopp = () => {
+    speechSynthesis.cancel();
+  };
+  const pause = () => {
+    if (speechSynthesis.speaking) speechSynthesis.pause();
+  };
 
   const [text, setText] = useState("");
-  
 
   return (
     <>
@@ -75,9 +87,23 @@ export default function Textform(props) {
         <button className="btn btn-primary mx-2 my-1" onClick={clear}>
           Clear
         </button>
-        <button className="btn btn-primary mx-2 my-1" onClick={speakky}>
-          Speak
-        </button>
+        <div
+          className="container d-flex justify-content-around"
+          style={{ backgroundColor: "#93c4a0" }}
+        >
+          <button
+            className="btn btn-primary btn-sm mx-2 my-1"
+            onClick={speakky}
+          >
+            Play
+          </button>
+          <button className="btn btn-primary btn-sm mx-2 my-1" onClick={stopp}>
+            Stop
+          </button>
+          <button className="btn btn-primary btn-sm mx-2 my-1" onClick={pause}>
+            Pause
+          </button>
+        </div>
       </div>
 
       <div className="container my-3">
@@ -85,9 +111,11 @@ export default function Textform(props) {
         <p>
           {" "}
           <b>words:</b>
-          {text.split(/\s+/).filter((element)=>{
-           return element.length!== 0;
-          }).length}
+          {
+            text.split(/\s+/).filter((element) => {
+              return element.length !== 0;
+            }).length
+          }
         </p>
         <p>
           <b>characters:</b> {text.length}
