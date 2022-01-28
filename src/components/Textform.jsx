@@ -37,6 +37,9 @@ export default function Textform(props) {
     setText("");
     props.showAlert("Text area cleared", "success");
   };
+  const speakky = ()=>{
+    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
 
   const [text, setText] = useState("");
   
@@ -71,6 +74,9 @@ export default function Textform(props) {
         </button>
         <button className="btn btn-primary mx-2 my-1" onClick={clear}>
           Clear
+        </button>
+        <button className="btn btn-primary mx-2 my-1" onClick={speakky}>
+          Speak
         </button>
       </div>
 
