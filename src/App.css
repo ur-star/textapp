@@ -1,4 +1,11 @@
 h1{
   text-align: center;
 }
+#txtform{
+  margin-top: -10px;
+}
+#opt{
+  width: 25%;
+  margin: 20px;
+}
 ;

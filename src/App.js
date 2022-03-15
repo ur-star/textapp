@@ -63,7 +63,7 @@ function App() {
             <About mode={mode} />
           </Route>
           <Route path="/"> */}
-          <Textform heading='Your Notebook' mode={mode} showAlert = {showAlert} />
+          <Textform heading='Your Notebook' mode={mode} showAlert = {showAlert}  id ="txtform"/>
           {/* </Route>
         </Switch> */}
     {/* <About/> */}

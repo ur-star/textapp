@@ -1,13 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+const axios = require("axios").default;
 
 export default function Textform(props) {
+  const [text, setText] = useState("");
+  const [options, setOptions] = useState([]);
+  const [from, setFrom] = useState("en");
+  const [to, setTo] = useState("");
+  const [out, setOut] = useState("");
   const onUpClick = () => {
     // console.log('uppercase was called');
+    document.getElementById("Textarea1").style.textTransform = "uppercase";
 
     let newtext = text.toUpperCase();
     setText(newtext);
   };
+  const translate = () => {
+    const params = new URLSearchParams();
+    params.append('q', text);
+    params.append('source', from);
+    params.append('target', to);
+    params.append('api_key', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
+
+    axios
+      .post("https://libretranslate.de/translate",params, {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      })
+      .then((res) => {console.log(res.data);
+        setOut(res.data.translatedText)});
+      
+  };
   const onLoClick = () => {
+    document.getElementById("Textarea1").style.textTransform = "lowercase";
+
     let newtext = text.toLowerCase();
     setText(newtext);
   };
@@ -16,9 +44,15 @@ export default function Textform(props) {
     // console.log('onchange called');
   };
   const capitalize = () => {
-    let newtext = text.charAt(0).toUpperCase() + text.slice(1);
-    setText(newtext);
-
+    let textarea = document.getElementById("Textarea1");
+    // console.log(textarea.style.textTransform);
+    if (textarea.style.textTransform === "capitalize") {
+      document.getElementById("Textarea1").style.textTransform = "none";
+    } else {
+      textarea.style.textTransform = "capitalize";
+    }
+    // let newtext = text.charAt(0).toUpperCase() + text.slice(1);
+    // setText(newtext);
     // document.getElementById('Textarea1').style.textTransform = 'capitalize';
   };
   const copy = () => {
@@ -54,12 +88,47 @@ export default function Textform(props) {
     if (speechSynthesis.speaking) speechSynthesis.pause();
   };
 
-  const [text, setText] = useState("");
+  
+
+  useEffect(() => {
+    axios
+      .get("https://libretranslate.com/languages", {
+        headers: { accept: "application/json" },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setOptions(res.data);
+      });
+  }, []);
 
   return (
     <>
       <div className="container">
-        <h1 className="mb-3">{props.heading}</h1>
+        <h1 className="mb-3 ">{props.heading}</h1>
+        From:
+        <select
+          className="btn btn-success mx-4 my-3"
+          id="opt"
+          onChange={(e) => setFrom(e.target.value)}
+        >
+          {options.map((opt) => (
+            <option key={opt.code} value={opt.code}>
+              {opt.name}
+            </option>
+          ))}
+        </select>
+        To:
+        <select
+          className="btn btn-success mx-4 my-3"
+          id="opt"
+          onChange={(e) => setTo(e.target.value)}
+        >
+          {options.map((opt) => (
+            <option key={opt.code} value={opt.code}>
+              {opt.name}
+            </option>
+          ))}
+        </select>
         <div className="mb-3">
           <textarea
             className="form-control "
@@ -86,6 +155,9 @@ export default function Textform(props) {
         </button>
         <button className="btn btn-primary mx-2 my-1" onClick={clear}>
           Clear
+        </button>
+        <button className="btn btn-primary mx-2 my-1" onClick={translate}>
+          Translate
         </button>
         <div
           className="container d-flex justify-content-around"
@@ -125,7 +197,7 @@ export default function Textform(props) {
           {(text.split(" ").length - 1) * 0.008}
         </p>
         <h2 className="my-3">Preview</h2>
-        <p>{text}</p>
+        <p>{out}</p>
       </div>
     </>
   );
