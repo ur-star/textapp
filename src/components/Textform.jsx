@@ -29,7 +29,8 @@ export default function Textform(props) {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       })
-      .then((res) => {console.log(res.data);
+      .then((res) => {
+        
         setOut(res.data.translatedText)});
       
   };
@@ -96,7 +97,7 @@ export default function Textform(props) {
         headers: { accept: "application/json" },
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setOptions(res.data);
       });
   }, []);
