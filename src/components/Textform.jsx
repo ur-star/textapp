@@ -17,22 +17,21 @@ export default function Textform(props) {
   };
   const translate = () => {
     const params = new URLSearchParams();
-    params.append('q', text);
-    params.append('source', from);
-    params.append('target', to);
-    params.append('api_key', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx');
+    params.append("q", text);
+    params.append("source", from);
+    params.append("target", to);
+    params.append("api_key", "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
 
     axios
-      .post("https://libretranslate.de/translate",params, {
+      .post("https://libretranslate.de/translate", params, {
         headers: {
-          accept: 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
       })
       .then((res) => {
-        
-        setOut(res.data.translatedText)});
-      
+        setOut(res.data.translatedText);
+      });
   };
   const onLoClick = () => {
     document.getElementById("Textarea1").style.textTransform = "lowercase";
@@ -89,8 +88,6 @@ export default function Textform(props) {
     if (speechSynthesis.speaking) speechSynthesis.pause();
   };
 
-  
-
   useEffect(() => {
     axios
       .get("https://libretranslate.com/languages", {
@@ -105,31 +102,33 @@ export default function Textform(props) {
   return (
     <>
       <div className="container">
-        <h1 className="mb-3 ">{props.heading}</h1>
-        From:
-        <select
-          className="btn btn-success mx-4 my-3"
-          id="opt"
-          onChange={(e) => setFrom(e.target.value)}
-        >
-          {options.map((opt) => (
-            <option key={opt.code} value={opt.code}>
-              {opt.name}
-            </option>
-          ))}
-        </select>
-        To:
-        <select
-          className="btn btn-success mx-4 my-3"
-          id="opt"
-          onChange={(e) => setTo(e.target.value)}
-        >
-          {options.map((opt) => (
-            <option key={opt.code} value={opt.code}>
-              {opt.name}
-            </option>
-          ))}
-        </select>
+        <div className="convert">
+          <h1 className="mb-3 ">{props.heading}</h1>
+          From:
+          <select
+            className="btn btn-success mx-4 my-3"
+            id="opt"
+            onChange={(e) => setFrom(e.target.value)}
+          >
+            {options.map((opt) => (
+              <option key={opt.code} value={opt.code}>
+                {opt.name}
+              </option>
+            ))}
+          </select>
+          To:
+          <select
+            className="btn btn-success mx-4 my-3"
+            id="opt"
+            onChange={(e) => setTo(e.target.value)}
+          >
+            {options.map((opt) => (
+              <option key={opt.code} value={opt.code}>
+                {opt.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="mb-3">
           <textarea
             className="form-control "
@@ -142,24 +141,26 @@ export default function Textform(props) {
             rows="10"
           ></textarea>
         </div>
-        <button className="btn btn-primary mx-2 my-1" onClick={onUpClick}>
-          Convert To Uppercase
-        </button>
-        <button className="btn btn-primary mx-2 my-1" onClick={onLoClick}>
-          Convert To Lowercase
-        </button>
-        <button className="btn btn-primary mx-2 my-1 " onClick={capitalize}>
-          Captalize
-        </button>
-        <button className="btn btn-primary mx-2 my-1 " onClick={copy}>
-          Copy
-        </button>
-        <button className="btn btn-primary mx-2 my-1" onClick={clear}>
-          Clear
-        </button>
-        <button className="btn btn-primary mx-2 my-1" onClick={translate}>
-          Translate
-        </button>
+        <div className="modifybtnn">
+          <button className="btn btn-primary mx-2 my-1 " onClick={onUpClick}>
+            Convert To Uppercase
+          </button>
+          <button className="btn btn-primary mx-2 my-1 " onClick={onLoClick}>
+            Convert To Lowercase
+          </button>
+          <button className="btn btn-primary mx-2 my-1 " onClick={capitalize}>
+            Captalize
+          </button>
+          <button className="btn btn-primary mx-2 my-1 " onClick={copy}>
+            Copy
+          </button>
+          <button className="btn btn-primary mx-2 my-1 " onClick={clear}>
+            Clear
+          </button>
+          <button className="btn btn-primary mx-2 my-1 " onClick={translate}>
+            Translate
+          </button>
+        </div>
         <div
           className="container d-flex justify-content-around"
           style={{ backgroundColor: "#93c4a0" }}

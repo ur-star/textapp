@@ -54,7 +54,7 @@ function App() {
   return (
     <div className="App">
     {/* <Router> */}
-    <Navbar title = 'TextUtils' mode={mode} toggleMode={toggleMode} />
+    <Navbar title = 'EpexText' mode={mode} toggleMode={toggleMode} />
     <Alert alert={alert}/>
     <div className='container'>
 {/*     

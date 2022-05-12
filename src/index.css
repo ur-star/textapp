@@ -5,3 +5,14 @@ scrollbar-width: none;
 body::-webkit-scrollbar {
     display: none; /* for Chrome, Safari, and Opera */
 };
+body{
+    text-align: center;
+}
+.convert{
+    text-align: center;
+}
+.modifybtnn{
+    /* background-color: gainsboro; */
+    margin-bottom: 1rem;
+    text-align: center;
+}
