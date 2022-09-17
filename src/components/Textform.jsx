@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const axios = require("axios").default;
 
@@ -6,20 +6,44 @@ export default function Textform(props) {
   const [text, setText] = useState("");
   const [options, setOptions] = useState([]);
   const [from, setFrom] = useState("en");
-  const [to, setTo] = useState("");
-  const [out, setOut] = useState("");
-  const onUpClick = () => {
-    // console.log('uppercase was called');
-    document.getElementById("Textarea1").style.textTransform = "uppercase";
+  const [languageto, setLanguageTo] = useState("");
+  const [output, setOutput] = useState("");
 
-    let newtext = text.toUpperCase();
-    setText(newtext);
-  };
+  const element = useRef();
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 4;
+  recognition.continuous = true;
+
+  const speechToText =() =>{
+
+    recognition.addEventListener('result',(e)=>{
+      const textResult = Array.from(e.results)
+      .map(result => result[0])
+      .map(result => result.transcript).join("")
+
+      // console.log(textResult);
+      setText(text+textResult)
+    })
+
+    recognition.start();
+    props.showAlert("Recording started");
+
+  }
+
+  const stopRecord = ()=>{
+    // console.log("it should stop");
+    recognition.stop();
+    recognition.abort();
+    }
+
   const translate = () => {
     const params = new URLSearchParams();
-    params.append("q", text);
+    params.append("q", text.toLowerCase());
     params.append("source", from);
-    params.append("target", to);
+    params.append("target", languageto);
     params.append("api_key", "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
 
     axios
@@ -30,33 +54,43 @@ export default function Textform(props) {
         },
       })
       .then((res) => {
-        setOut(res.data.translatedText);
+        setOutput(res.data.translatedText);
       });
   };
+
+  const onUpClick = () => {
+    element.current.style.textTransform = "uppercase";
+    let newtext = text.toUpperCase();
+    setText(newtext);
+  };
+
   const onLoClick = () => {
-    document.getElementById("Textarea1").style.textTransform = "lowercase";
+    if(element.current){
+      element.current.style.textTransform = "lowercase";
+    }
 
     let newtext = text.toLowerCase();
     setText(newtext);
   };
+
   const handelChange = (event) => {
     setText(event.target.value);
-    // console.log('onchange called');
   };
+
   const capitalize = () => {
-    let textarea = document.getElementById("Textarea1");
-    // console.log(textarea.style.textTransform);
-    if (textarea.style.textTransform === "capitalize") {
-      document.getElementById("Textarea1").style.textTransform = "none";
+    
+    if (element.current.style.textTransform === "capitalize") {
+      element.current.style.textTransform = "none";
     } else {
-      textarea.style.textTransform = "capitalize";
+        if(element.current){
+      element.current.style.textTransform = "capitalize";
     }
-    // let newtext = text.charAt(0).toUpperCase() + text.slice(1);
-    // setText(newtext);
-    // document.getElementById('Textarea1').style.textTransform = 'capitalize';
+    }
+    
   };
+
   const copy = () => {
-    let newtext = document.getElementById("Textarea1");
+    let newtext = element.current;
     newtext.select();
     navigator.clipboard.writeText(newtext.value);
     if (text.length < 2) {
@@ -65,17 +99,22 @@ export default function Textform(props) {
       props.showAlert("Copied to clipboard", "success");
     }
   };
+
   const clear = () => {
     setText("");
     props.showAlert("Text area cleared", "success");
   };
+
   const speakky = () => {
-    let txtarea = document.getElementById("Textarea1");
+    let txtarea = element.current;
     if (speechSynthesis.paused && speechSynthesis.speaking) {
       return speechSynthesis.resume();
     }
-    let utterance = new SpeechSynthesisUtterance(text);
-    utterance.addEventListener("end", () => {
+     const utterance = new SpeechSynthesisUtterance(text);
+     const voices = window.speechSynthesis.getVoices();
+     utterance.voice = voices[4];
+     utterance.rate = 0.8;
+     utterance.addEventListener("end", () => {
       txtarea.disabled = false;
     });
     txtarea.disabled = true;
@@ -120,7 +159,7 @@ export default function Textform(props) {
           <select
             className="btn btn-success mx-4 my-3"
             id="opt"
-            onChange={(e) => setTo(e.target.value)}
+            onChange={(e) => setLanguageTo(e.target.value)}
           >
             {options.map((opt) => (
               <option key={opt.code} value={opt.code}>
@@ -138,7 +177,8 @@ export default function Textform(props) {
               backgroundColor: props.mode === "dark" ? "#43594e" : "#dcf7e9",
             }}
             id="Textarea1"
-            rows="10"
+            rows="15"
+            ref={element}
           ></textarea>
         </div>
         <div className="modifybtnn">
@@ -162,21 +202,35 @@ export default function Textform(props) {
           </button>
         </div>
         <div
-          className="container d-flex justify-content-around"
-          style={{ backgroundColor: "#93c4a0" }}
+          className="container bg-success d-flex"
+          // style={{ backgroundColor: "#93c4a0" }}
         >
-          <button
-            className="btn btn-primary btn-sm mx-2 my-1"
-            onClick={speakky}
-          >
-            Play
-          </button>
-          <button className="btn btn-primary btn-sm mx-2 my-1" onClick={stopp}>
-            Stop
-          </button>
-          <button className="btn btn-primary btn-sm mx-2 my-1" onClick={pause}>
-            Pause
-          </button>
+          <div style={{ marginRight: "auto" }}>
+            <button
+              className="btn btn-primary btn-sm mx-2 my-1"
+              onClick={speakky}
+            >
+              Play
+            </button>
+            <button
+              className="btn btn-primary btn-sm mx-2 my-1"
+              onClick={stopp}
+            >
+              Stop
+            </button>
+            <button
+              className="btn btn-primary btn-sm mx-2 my-1"
+              onClick={pause}
+            >
+              Pause
+            </button>
+          </div>
+          <div>
+            <button className="btn btn-primary btn-sm mx-2 my-1" onClick={speechToText}>Record</button>
+            <button className="btn btn-primary btn-sm mx-2 my-1" onClick={stopRecord}>
+              Stop Record
+            </button>
+          </div>
         </div>
       </div>
 
@@ -184,7 +238,7 @@ export default function Textform(props) {
         <h1>Your Text Summary</h1>
         <p>
           {" "}
-          <b>words:</b>
+          <b>words: </b>
           {
             text.split(/\s+/).filter((element) => {
               return element.length !== 0;
@@ -192,14 +246,14 @@ export default function Textform(props) {
           }
         </p>
         <p>
-          <b>characters:</b> {text.length}
+          <b>characters: </b> {text.length}
         </p>
         <p>
-          <b>Average time to read:</b>
+          <b>Average time to read: </b>
           {(text.split(" ").length - 1) * 0.008}
         </p>
         <h2 className="my-3">Preview</h2>
-        <p>{out}</p>
+        <p>{output}</p>
       </div>
     </>
   );
