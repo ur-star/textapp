@@ -15,7 +15,7 @@ export default function Textform(props) {
   const recognition = new SpeechRecognition();
   recognition.interimResults = true;
   recognition.maxAlternatives = 4;
-  recognition.continuous = true;
+  // recognition.continuous = true;
 
   const speechToText =() =>{
 
@@ -35,8 +35,8 @@ export default function Textform(props) {
 
   const stopRecord = ()=>{
     // console.log("it should stop");
-    recognition.stop();
     recognition.abort();
+    recognition.stop();
     }
 
   const translate = () => {
